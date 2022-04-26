@@ -22,9 +22,26 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
+ <!--
 <a class="banner" href="{$banner_link}">
   {if isset($banner_img)}
     <img src="{$banner_img}" alt="{$banner_desc}" title="{$banner_desc}">
+  {else}
+    <span>{$banner_desc}</span>
+  {/if}
+</a>
+-->
+
+<a class="banner" href="{$banner_link}" title="{$banner_desc}">
+  {if isset($banner_img)}
+    <!-- <img src="{$banner_img}" alt="{$banner_desc}" title="{$banner_desc}" class="img-fluid">
+    <img src="{$banner_img_phone}" alt="{$banner_desc}" title="{$banner_desc}" class="img-fluid"> -->
+
+    <picture class="picture_banner">
+                          <source srcset="{$banner_img_phone}" alt="{$banner_desc}" title="{$banner_desc}" class="banner-img-phone" media="(max-width: 640px)">
+                          <source srcset="{$banner_img}" alt="{$banner_desc}" title="{$banner_desc}" class="img-fluid" media="(min-width: 640px)">
+                          <img class="" src="{$banner_img}" alt="{$banner_desc}" title="{$banner_desc}">
+            </picture>
   {else}
     <span>{$banner_desc}</span>
   {/if}
