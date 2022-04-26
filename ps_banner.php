@@ -157,6 +157,30 @@ class Ps_Banner extends Module implements WidgetInterface
                     $update_images_values = true;
                 }
 
+                if (isset($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']])
+                    && isset($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']]['tmp_name'])
+                    && !empty($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']]['tmp_name'])) {
+                    if ($error = ImageManager::validateUpload($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']], 4000000)) {
+                        return $this->displayError($error);
+                    } else {
+                        $ext = substr($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']]['name'], strrpos($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']]['name'], '.') + 1);
+                        $file_name_phone = md5($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']]['name']).'.'.$ext;
+
+                        if (!move_uploaded_file($_FILES['BANNER_IMG_PHONE_'.$lang['id_lang']]['tmp_name'], dirname(__FILE__).DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.$file_name_phone)) {
+                            return $this->displayError($this->trans('An error occurred while attempting to upload the file.', array(), 'Admin.Notifications.Error'));
+                        } else {
+                            if (Configuration::hasContext('BANNER_IMGPHONE', $lang['id_lang'], Shop::getContext())
+                                && Configuration::get('BANNER_IMG_PHONE', $lang['id_lang']) != $file_name_phone) {
+                                @unlink(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . Configuration::get('BANNER_IMG', $lang['id_lang']));
+                            }
+
+                            $values['BANNER_IMG_PHONE'][$lang['id_lang']] = $file_name_phone;
+                        }
+                    }
+
+                    $update_images_phone_values = true;
+                }
+
                 $values['BANNER_LINK'][$lang['id_lang']] = Tools::getValue('BANNER_LINK_'.$lang['id_lang']);
                 $values['BANNER_DESC'][$lang['id_lang']] = Tools::getValue('BANNER_DESC_'.$lang['id_lang']);
             }
@@ -164,7 +188,7 @@ class Ps_Banner extends Module implements WidgetInterface
             if ($update_images_values) {
                 Configuration::updateValue('BANNER_IMG', $values['BANNER_IMG']);
             }
-            if ($update_images_values) {
+            if ($update_images_phone_values) {
                 Configuration::updateValue('BANNER_IMG_PHONE', $values['BANNER_IMG_PHONE']);
             }
 
@@ -288,10 +312,10 @@ class Ps_Banner extends Module implements WidgetInterface
             $this->smarty->assign('banner_img', $this->context->link->protocol_content . Tools::getMediaServer($imgname) . $this->_path . 'img/' . $imgname);
         }
 
-        $imgname = Configuration::get('BANNER_IMG_PHONE', $this->context->language->id);
+        $imgname_phone = Configuration::get('BANNER_IMG_PHONE', $this->context->language->id);
 
-        if ($imgname && file_exists(_PS_MODULE_DIR_.$this->name.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.$imgname)) {
-            $this->smarty->assign('banner_img_phone', $this->context->link->protocol_content . Tools::getMediaServer($imgname) . $this->_path . 'img/' . $imgname);
+        if ($imgname_phone && file_exists(_PS_MODULE_DIR_.$this->name.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.$imgname_phone)) {
+            $this->smarty->assign('banner_img_phone', $this->context->link->protocol_content . Tools::getMediaServer($imgname_phone) . $this->_path . 'img/' . $imgname_phone);
         }
 
         $banner_link = Configuration::get('BANNER_LINK', $this->context->language->id);
