@@ -61,15 +61,9 @@
 				<div class="form-group">
 					{if isset($fields_value[$input.name][$language.id_lang]) && $fields_value[$input.name][$language.id_lang] != ''}
 					<div id="{$input.name}-{$language.id_lang}-images-thumbnails" class="col-lg-12">
-						<img src="{$uri}img/{$fields_value['BANNER_IMG_PHONE_'][$language.id_lang]}" class="img-thumbnail"/>
+						<img src="{$uri}img/{$fields_value[$input.name][$language.id_lang]}" class="img-thumbnail"/>
 					</div>
 					{/if}
-
-					{if isset($fields_value[$input.name][$language.id_lang]) && $fields_value[$input.name][$language.id_lang] != ''}
-						<div id="{$input.name}-{$language.id_lang}-images-thumbnails" class="col-lg-12">
-							<img src="{$uri}img/{$fields_value[$input.name][$language.id_lang]}" class="img-thumbnail"/>
-						</div>
-						{/if}
 				</div>
 				{if $languages|count > 1}
 					</div>
